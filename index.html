@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pet Coin Game</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#10152b;color:white;text-align:center}
+.app{max-width:430px;margin:auto;padding:24px 18px}
+h1{color:#ffd54a}
+.card{background:#202846;padding:18px;border-radius:18px;margin:15px 0}
+.balance{font-size:34px;font-weight:bold;color:#ffd54a}
+.coin{width:180px;height:180px;border-radius:50%;border:7px solid #ffe89a;background:linear-gradient(145deg,#ffd84d,#ed9c00);font-size:76px;cursor:pointer;box-shadow:0 7px 0 #996000;margin:20px}
+button{border:0;border-radius:12px;padding:14px;margin:5px;background:#ffd54a;color:#171717;font-size:16px;font-weight:bold;cursor:pointer}
+.small{color:#c6cee8;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🐾 PET COIN</h1>
+<p class="small">Tap • Play • Collect</p>
+
+<div class="card">
+<p>Your Balance</p>
+<div class="balance" id="balance">0</div>
+<p>🪙 PET Points</p>
+</div>
+
+<button class="coin" id="tap">🐾</button>
+<p>Tap to collect points!</p>
+
+<div class="card">
+<h3>🎁 Daily Reward</h3>
+<button id="daily">Claim 100 Points</button>
+<p id="dailyMsg" class="small"></p>
+</div>
+
+<div class="card">
+<h3>🎮 Play Bonus</h3>
+<button id="bonus">Collect 10 Points</button>
+</div>
+
+<div class="card">
+<h3>👥 Invite Friends</h3>
+<p class="small">Share your game link with friends.</p>
+<button id="share">Invite on Telegram</button>
+</div>
+
+<p class="small">Demo version • Points have no cash value.</p>
+</div>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp;
+if(tg){tg.ready();tg.expand()}
+
+let balance=0;
+const balanceEl=document.getElementById('balance');
+function addPoints(n){
+balance+=n;
+balanceEl.textContent=balance.toLocaleString();
+}
+document.getElementById('tap').addEventListener('click',()=>addPoints(1));
+document.getElementById('bonus').addEventListener('click',()=>addPoints(10));
+
+document.getElementById('daily').addEventListener('click',()=>{
+const today=new Date().toISOString().slice(0,10);
+if(window.lastDaily===today){
+document.getElementById('dailyMsg').textContent='Already claimed today!';
+return;
+}
+window.lastDaily=today;
+addPoints(100);
+document.getElementById('dailyMsg').textContent='100 points collected!';
+});
+
+document.getElementById('share').addEventListener('click',()=>{
+const bot='PetCoinRewardsBot';
+const link='https://t.me/'+bot+'?start=ref123';
+if(tg && tg.openTelegramLink){
+tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join Pet Coin Game!'));
+}else{
+window.open('https://t.me/share/url?url='+encodeURIComponent(link),'_blank');
+}
+});
+</script>
+</body>
+</html>
